@@ -30,6 +30,19 @@ namespace FullStackAPI.Controllers
             _context = context;
         }
 
+        // Lấy: dựa vào EMAIL
+        [HttpGet("GetEmail/{email}")]
+        public async Task<ActionResult<KhachHang>> GetKhachHangFromEmail(string email)
+        {
+            var khachhang = await _context.khachHangs.FirstOrDefaultAsync(x => x.Email == email);
+            if (khachhang == null)
+            {
+                return NotFound();
+            }
+
+            return khachhang;
+        }
+
         // Đăng nhập
         [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate([FromBody] KhachHang khachHang)
@@ -38,22 +51,22 @@ namespace FullStackAPI.Controllers
             {
                 return BadRequest();
             }
-            var user = await _context.taiKhoans
+            var khachhangne = await _context.taiKhoans
                 .FirstOrDefaultAsync(x => x.Email == khachHang.Email);
-            if (user == null)
+            if (khachhangne == null)
             {
                 return NotFound(new { Message = "Không Có Tài Khoản!" });
             }
-            if(!PasswordHasher.VerifyPassword(khachHang.MatKhau, user.MatKhau))
+            if(!PasswordHasher.VerifyPassword(khachHang.MatKhau, khachhangne.MatKhau))
             {
                 return BadRequest(new { Message = "Sai thông tin đăng nhập!" });
             }
 
-            user.Token = CreateJwt(user);
+            khachhangne.Token = CreateJwt(khachhangne);
 
             return Ok(new
             {
-                Token= user.Token,
+                Token= khachhangne.Token,
                 Message = "Đăng nhập thành công!"
             });
         }
@@ -84,18 +97,17 @@ namespace FullStackAPI.Controllers
         }
 
 
-
-
-
         // Tao 1 Token cua chinh minh
-        private string CreateJwt(TaiKhoan user)
+        private string CreateJwt(TaiKhoan tk)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes("khoabimatkhoabimat...");
             var identity = new ClaimsIdentity(new Claim[]
             {
-                new Claim(ClaimTypes.Role, user.TenCV),
-                new Claim(ClaimTypes.Name, user.HoTen)
+                new Claim(ClaimTypes.Role, tk.TenCV),
+                new Claim(ClaimTypes.Name, tk.HoTen),
+                new Claim(ClaimTypes.Email, tk.Email),
+
             });
 
             var credentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);

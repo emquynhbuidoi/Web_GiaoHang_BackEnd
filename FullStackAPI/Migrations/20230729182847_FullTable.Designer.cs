@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FullStackAPI.Migrations
 {
     [DbContext(typeof(FullStackDbContext))]
-    [Migration("20230724063111_fulltableKhoaNgoai")]
-    partial class fulltableKhoaNgoai
+    [Migration("20230729182847_FullTable")]
+    partial class FullTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,21 +65,27 @@ namespace FullStackAPI.Migrations
                     b.Property<int?>("MaTX")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("NgayDatGiao")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("NgayDatGiao")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("NgayGiaoHang")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("NgayGiaoHang")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SDTNguoiGui")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SDTNguoiNhan")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TenNguoiNhan")
+                    b.Property<string>("TenNguoiGui")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TenPTVC")
+                    b.Property<string>("TenNguoiNhan")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -184,14 +190,16 @@ namespace FullStackAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("MuocTienApDung")
+                    b.Property<float>("MucTienApDung")
                         .HasColumnType("real");
 
-                    b.Property<DateTime>("NgayApDung")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("NgayApDung")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("NgayKetThuc")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("NgayKetThuc")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<float>("PhanTramKM")
                         .HasColumnType("real");
@@ -245,6 +253,12 @@ namespace FullStackAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("MaKho")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaTK")
+                        .HasColumnType("int");
+
                     b.Property<string>("MatKhau")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -281,9 +295,10 @@ namespace FullStackAPI.Migrations
                     b.Property<int>("MaKho")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("NgayTao")
+                    b.Property<string>("NgayTao")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
+                        .HasColumnType("nvarchar(max)")
                         .HasDefaultValueSql("GETDATE()");
 
                     b.Property<int>("donGiaoMaDG")
@@ -383,8 +398,9 @@ namespace FullStackAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("NgaySinh")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("NgaySinh")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SDT")
                         .IsRequired()
@@ -423,6 +439,12 @@ namespace FullStackAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("MaPTVC")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaTK")
+                        .HasColumnType("int");
+
                     b.Property<string>("MatKhau")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -431,10 +453,15 @@ namespace FullStackAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("phuongThucVCMaPTVC")
+                        .HasColumnType("int");
+
                     b.Property<int>("taiKhoanMaTK")
                         .HasColumnType("int");
 
                     b.HasKey("MaTX");
+
+                    b.HasIndex("phuongThucVCMaPTVC");
 
                     b.HasIndex("taiKhoanMaTK");
 
@@ -546,11 +573,19 @@ namespace FullStackAPI.Migrations
 
             modelBuilder.Entity("FullStackAPI.Models.TaiXe", b =>
                 {
+                    b.HasOne("FullStackAPI.Models.PhuongThucVC", "phuongThucVC")
+                        .WithMany()
+                        .HasForeignKey("phuongThucVCMaPTVC")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("FullStackAPI.Models.TaiKhoan", "taiKhoan")
                         .WithMany()
                         .HasForeignKey("taiKhoanMaTK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("phuongThucVC");
 
                     b.Navigation("taiKhoan");
                 });

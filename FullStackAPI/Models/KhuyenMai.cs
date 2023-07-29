@@ -8,10 +8,10 @@ namespace FullStackAPI.Models
         public int MaKM { get; set; }
         public float PhanTramKM { get; set; }
         public string MoTa { get; set; }
-        public DateTime NgayApDung { get; set; }
-        public DateTime NgayKetThuc { get; set; }
+        public string NgayApDung { get; set; }
+        public string NgayKetThuc { get; set; }
         public int SoLuong { get; set; }
-        public float MuocTienApDung { get; set; }
+        public float MucTienApDung { get; set; }
 
     }
 }

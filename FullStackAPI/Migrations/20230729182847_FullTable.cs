@@ -1,12 +1,11 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace FullStackAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class fulltable : Migration
+    public partial class FullTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,9 +32,10 @@ namespace FullStackAPI.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PhanTramKM = table.Column<float>(type: "real", nullable: false),
                     MoTa = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NgayApDung = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    NgayKetThuc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SoLuong = table.Column<int>(type: "int", nullable: false)
+                    NgayApDung = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NgayKetThuc = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SoLuong = table.Column<int>(type: "int", nullable: false),
+                    MucTienApDung = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -93,7 +93,7 @@ namespace FullStackAPI.Migrations
                     SDT = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GioiTinh = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DiaChi = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NgaySinh = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NgaySinh = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     HoTen = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TrangThaiTK = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TenCV = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -112,7 +112,6 @@ namespace FullStackAPI.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MatKhau = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MaTK = table.Column<int>(type: "int", nullable: false),
                     taiKhoanMaTK = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -136,7 +135,7 @@ namespace FullStackAPI.Migrations
                     MatKhau = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MaTK = table.Column<int>(type: "int", nullable: false),
                     taiKhoanMaTK = table.Column<int>(type: "int", nullable: false),
-                    MaKho = table.Column<int>(type: "int", nullable: true),
+                    MaKho = table.Column<int>(type: "int", nullable: false),
                     khoMaKho = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -219,25 +218,26 @@ namespace FullStackAPI.Migrations
                     DiaChiGiao = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DiaChiNhan = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     KhoangCach = table.Column<float>(type: "real", nullable: false),
-                    NgayDatGiao = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    NgayGiaoHang = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NgayDatGiao = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NgayGiaoHang = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LaDonDatGiao = table.Column<int>(type: "int", nullable: false),
                     TenNguoiNhan = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SDTNguoiNhan = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TenNguoiGui = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SDTNguoiGui = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TongTien = table.Column<float>(type: "real", nullable: false),
-                    TenPTVC = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MaKH = table.Column<int>(type: "int", nullable: false),
                     khachHangMaKH = table.Column<int>(type: "int", nullable: false),
                     MaPTTT = table.Column<int>(type: "int", nullable: false),
                     phuongThucTTMaPTTT = table.Column<int>(type: "int", nullable: false),
                     MaPTGH = table.Column<int>(type: "int", nullable: false),
                     phuongThucGHMaPTGH = table.Column<int>(type: "int", nullable: false),
+                    MaKM = table.Column<int>(type: "int", nullable: true),
+                    khuyenMaiMaKM = table.Column<int>(type: "int", nullable: true),
                     MaTX = table.Column<int>(type: "int", nullable: true),
                     taiXeMaTX = table.Column<int>(type: "int", nullable: true),
                     MaKho = table.Column<int>(type: "int", nullable: true),
-                    khoMaKho = table.Column<int>(type: "int", nullable: true),
-                    MaKM = table.Column<int>(type: "int", nullable: true),
-                    khuyenMaiMaKM = table.Column<int>(type: "int", nullable: true)
+                    khoMaKho = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -283,7 +283,7 @@ namespace FullStackAPI.Migrations
                 {
                     MaPhieu = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    NgayTao = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValueSql: "GETDATE()"),
                     LaPhieuXuat = table.Column<int>(type: "int", nullable: false),
                     MaDG = table.Column<int>(type: "int", nullable: false),
                     donGiaoMaDG = table.Column<int>(type: "int", nullable: false),

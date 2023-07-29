@@ -12,7 +12,9 @@ namespace FullStackAPI.Models
         public string MatKhau { get; set; }
 
 
-
+        public int MaTK { get; set; }
         public TaiKhoan taiKhoan { get; set; }
+        public int MaPTVC { get; set; }
+        public PhuongThucVC phuongThucVC { get; set; }
     }
 }

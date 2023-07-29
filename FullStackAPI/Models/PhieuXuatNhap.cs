@@ -6,7 +6,7 @@ namespace FullStackAPI.Models
     {
         [Key]
         public int MaPhieu { get; set; }
-        public DateTime NgayTao { get; set; }
+        public string NgayTao { get; set; }
         public int LaPhieuXuat { get; set; }
 
         public int MaDG { get; set; }
