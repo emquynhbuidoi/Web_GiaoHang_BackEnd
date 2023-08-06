@@ -42,11 +42,28 @@ namespace FullStackAPI.Controllers
 
             return khachhang;
         }
+        // GET: api/khachhang
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<KhachHang>>> GetnhanViens()
+        {
+            if (_context.khachHangs == null)
+            {
+                return NotFound();
+            }
+            return await _context.khachHangs.ToListAsync();
+        }
 
-        // Đăng nhập
+        // Đăng nhập khách hàng
         [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate([FromBody] KhachHang khachHang)
         {
+            var cv = await _context.chucVus.FindAsync(khachHang.taiKhoan.MaCV);
+            if (cv == null)
+            {
+                return BadRequest("Không tìm thấy khoá CV!");
+            }
+            khachHang.taiKhoan.chucVu = cv;
+
             if (khachHang == null)
             {
                 return BadRequest();
@@ -62,11 +79,12 @@ namespace FullStackAPI.Controllers
                 return BadRequest(new { Message = "Sai thông tin đăng nhập!" });
             }
 
-            khachhangne.Token = CreateJwt(khachhangne);
+            PasswordHasher passwordHasher = new PasswordHasher(_context);
+            khachhangne.Token = await passwordHasher.CreateJwtAsync(khachhangne);
 
             return Ok(new
             {
-                Token= khachhangne.Token,
+                Token = khachhangne.Token,
                 Message = "Đăng nhập thành công!"
             });
         }
@@ -89,7 +107,14 @@ namespace FullStackAPI.Controllers
             khachHang.MatKhau = mkMaHoa;
             khachHang.taiKhoan.MatKhau = mkMaHoa;
             //khachHang.Token = "";
-            
+
+            var cv = await _context.chucVus.FindAsync(khachHang.taiKhoan.MaCV);
+            if (cv == null)
+            {
+                return BadRequest("Không tìm thấy khoá CV!");
+            }
+            khachHang.taiKhoan.chucVu = cv;
+
             _context.khachHangs.Add(khachHang);
             await _context.SaveChangesAsync();
 
@@ -97,65 +122,39 @@ namespace FullStackAPI.Controllers
         }
 
 
-        // Tao 1 Token cua chinh minh
-        private string CreateJwt(TaiKhoan tk)
-        {
-            var jwtTokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("khoabimatkhoabimat...");
-            var identity = new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Role, tk.TenCV),
-                new Claim(ClaimTypes.Name, tk.HoTen),
-                new Claim(ClaimTypes.Email, tk.Email),
 
-            });
+        //private string CreateRefreshToken()
+        //{
+        //    var tokenBytes = RandomNumberGenerator.GetBytes(64);
+        //    var refreshToken = Convert.ToBase64String(tokenBytes);
 
-            var credentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = identity,
-                Expires = DateTime.Now.AddMinutes(30),
-                SigningCredentials = credentials
-            };
-            var token = jwtTokenHandler.CreateToken(tokenDescriptor);
-            return jwtTokenHandler.WriteToken(token);
-        }
-
-        private string CreateRefreshToken()
-        {
-            var tokenBytes = RandomNumberGenerator.GetBytes(64);
-            var refreshToken = Convert.ToBase64String(tokenBytes);
-
-            //var tokenInUser = _context.Users
-            //    .Any(a => a.RefreshToken == refreshToken);
-            //if (tokenInUser)
-            //{
-            //    return CreateRefreshToken();
-            //}
-            return refreshToken;
-        }
-
-        private ClaimsPrincipal GetPrincipleFromExpiredToken(string token)
-        {
-            var key = Encoding.ASCII.GetBytes("khoabimat...");
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateAudience = false,
-                ValidateIssuer = false,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateLifetime = false
-            };
-            var tokenHandler = new JwtSecurityTokenHandler();
-            SecurityToken securityToken;
-            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
-            var jwtSecurityToken = securityToken as JwtSecurityToken;
-            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-                throw new SecurityTokenException("This is Invalid Token");
-            return principal;
-
-        }
+        //    //var tokenInUser = _context.Users
+        //    //    .Any(a => a.RefreshToken == refreshToken);
+        //    //if (tokenInUser)
+        //    //{
+        //    //    return CreateRefreshToken();
+        //    //}
+        //    return refreshToken;
+        //}
+        //private ClaimsPrincipal GetPrincipleFromExpiredToken(string token)
+        //{
+        //    var key = Encoding.ASCII.GetBytes("khoabimat...");
+        //    var tokenValidationParameters = new TokenValidationParameters
+        //    {
+        //        ValidateAudience = false,
+        //        ValidateIssuer = false,
+        //        ValidateIssuerSigningKey = true,
+        //        IssuerSigningKey = new SymmetricSecurityKey(key),
+        //        ValidateLifetime = false
+        //    };
+        //    var tokenHandler = new JwtSecurityTokenHandler();
+        //    SecurityToken securityToken;
+        //    var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+        //    var jwtSecurityToken = securityToken as JwtSecurityToken;
+        //    if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+        //        throw new SecurityTokenException("This is Invalid Token");
+        //    return principal;
+        //}
 
     }
 }

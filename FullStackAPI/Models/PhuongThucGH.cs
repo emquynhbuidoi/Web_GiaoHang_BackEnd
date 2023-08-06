@@ -7,6 +7,5 @@ namespace FullStackAPI.Models
         [Key]
         public int MaPTGH { get; set; }
         public string TenPTGH { get; set; }
-        public float DonGia { get; set; }
     }
 }

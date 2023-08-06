@@ -22,6 +22,23 @@ namespace FullStackAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("FullStackAPI.Models.ChucVu", b =>
+                {
+                    b.Property<int>("MaCV")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaCV"));
+
+                    b.Property<string>("TenCV")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MaCV");
+
+                    b.ToTable("chucVus");
+                });
+
             modelBuilder.Entity("FullStackAPI.Models.DonGiao", b =>
                 {
                     b.Property<int>("MaDG")
@@ -41,9 +58,6 @@ namespace FullStackAPI.Migrations
                     b.Property<float>("KhoangCach")
                         .HasColumnType("real");
 
-                    b.Property<int>("LaDonDatGiao")
-                        .HasColumnType("int");
-
                     b.Property<int>("MaKH")
                         .HasColumnType("int");
 
@@ -57,6 +71,9 @@ namespace FullStackAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("MaPTTT")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaPTVC")
                         .HasColumnType("int");
 
                     b.Property<int?>("MaTX")
@@ -108,6 +125,9 @@ namespace FullStackAPI.Migrations
                     b.Property<int>("phuongThucTTMaPTTT")
                         .HasColumnType("int");
 
+                    b.Property<int>("phuongThucVCMaPTVC")
+                        .HasColumnType("int");
+
                     b.Property<int?>("taiXeMaTX")
                         .HasColumnType("int");
 
@@ -122,6 +142,8 @@ namespace FullStackAPI.Migrations
                     b.HasIndex("phuongThucGHMaPTGH");
 
                     b.HasIndex("phuongThucTTMaPTTT");
+
+                    b.HasIndex("phuongThucVCMaPTVC");
 
                     b.HasIndex("taiXeMaTX");
 
@@ -250,10 +272,7 @@ namespace FullStackAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("MaKho")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MaTK")
+                    b.Property<int?>("MaKho")
                         .HasColumnType("int");
 
                     b.Property<string>("MatKhau")
@@ -321,9 +340,6 @@ namespace FullStackAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaPTGH"));
 
-                    b.Property<float>("DonGia")
-                        .HasColumnType("real");
-
                     b.Property<string>("TenPTGH")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -358,6 +374,9 @@ namespace FullStackAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaPTVC"));
 
+                    b.Property<float>("DonGia")
+                        .HasColumnType("real");
+
                     b.Property<string>("TenPTVC")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -391,6 +410,9 @@ namespace FullStackAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("MaCV")
+                        .HasColumnType("int");
+
                     b.Property<string>("MatKhau")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -403,10 +425,6 @@ namespace FullStackAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TenCV")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Token")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -415,7 +433,12 @@ namespace FullStackAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("chucVuMaCV")
+                        .HasColumnType("int");
+
                     b.HasKey("MaTK");
+
+                    b.HasIndex("chucVuMaCV");
 
                     b.ToTable("taiKhoans");
                 });
@@ -439,12 +462,12 @@ namespace FullStackAPI.Migrations
                     b.Property<int>("MaPTVC")
                         .HasColumnType("int");
 
-                    b.Property<int>("MaTK")
-                        .HasColumnType("int");
-
                     b.Property<string>("MatKhau")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SLHD")
+                        .HasColumnType("int");
 
                     b.Property<string>("TenPhuongTien")
                         .IsRequired()
@@ -493,6 +516,12 @@ namespace FullStackAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("FullStackAPI.Models.PhuongThucVC", "phuongThucVC")
+                        .WithMany()
+                        .HasForeignKey("phuongThucVCMaPTVC")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("FullStackAPI.Models.TaiXe", "taiXe")
                         .WithMany()
                         .HasForeignKey("taiXeMaTX");
@@ -506,6 +535,8 @@ namespace FullStackAPI.Migrations
                     b.Navigation("phuongThucGH");
 
                     b.Navigation("phuongThucTT");
+
+                    b.Navigation("phuongThucVC");
 
                     b.Navigation("taiXe");
                 });
@@ -566,6 +597,17 @@ namespace FullStackAPI.Migrations
                     b.Navigation("donGiao");
 
                     b.Navigation("kho");
+                });
+
+            modelBuilder.Entity("FullStackAPI.Models.TaiKhoan", b =>
+                {
+                    b.HasOne("FullStackAPI.Models.ChucVu", "chucVu")
+                        .WithMany()
+                        .HasForeignKey("chucVuMaCV")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("chucVu");
                 });
 
             modelBuilder.Entity("FullStackAPI.Models.TaiXe", b =>

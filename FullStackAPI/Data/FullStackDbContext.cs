@@ -32,5 +32,7 @@ namespace FullStackAPI.Data
         public DbSet<PhuongThucGH> phuongThucGHs { get; set; }
         public DbSet<PhuongThucVC> phuongThucVCs { get; set; }
         public DbSet<PhuongThucTT> phuongThucTTs { get; set; }
+        public DbSet<ChucVu> chucVus { get; set; }
+
     }
 }

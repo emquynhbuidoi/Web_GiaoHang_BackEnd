@@ -12,7 +12,6 @@ namespace FullStackAPI.Models
         public float KhoangCach { get; set; }
         public string NgayDatGiao { get; set; }
         public string NgayGiaoHang { get; set; }
-        public int LaDonDatGiao { get; set; }
         public string TenNguoiNhan { get; set; }
         public string SDTNguoiNhan { get; set; }
         public string TenNguoiGui { get; set; }
@@ -27,6 +26,8 @@ namespace FullStackAPI.Models
         public PhuongThucTT phuongThucTT { get; set; }
         public int MaPTGH { get; set; }
         public PhuongThucGH phuongThucGH { get; set; }
+        public int MaPTVC { get; set; }
+        public PhuongThucVC phuongThucVC { get; set; }
         public int? MaKM { get; set; }
         public KhuyenMai? khuyenMai { get; set; }
         public int? MaTX { get; set; }

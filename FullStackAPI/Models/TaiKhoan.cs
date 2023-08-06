@@ -14,7 +14,9 @@ namespace FullStackAPI.Models
         public string NgaySinh { get; set; }
         public string HoTen { get; set; }
         public string TrangThaiTK { get; set; }
-        public string TenCV { get; set; }
         public string Token { get; set; }
+
+        public int MaCV { get; set; }
+        public ChucVu chucVu { get; set; }
     }
 }

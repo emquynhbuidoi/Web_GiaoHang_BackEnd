@@ -30,6 +30,13 @@ namespace FullStackAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<TaiKhoan>> CreateTaiKhoan(TaiKhoan taiKhoan)
         {
+            var cv = await _context.chucVus.FindAsync(taiKhoan.chucVu.MaCV);
+            if (cv == null)
+            {
+                return BadRequest("Không tìm thấy khoá CV!");
+            }
+            taiKhoan.chucVu = cv;
+
             if (_context.taiKhoans == null)
             {
                 return Problem("Entity set 'FullStackDbContext.taiKhoans'  is null.");
@@ -93,7 +100,7 @@ namespace FullStackAPI.Controllers
         }
 
         // PUT: api/TaiKhoans/5
-        [Authorize]
+        //[Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTaiKhoan(int id, TaiKhoan taiKhoanMoi)
         {
@@ -102,10 +109,6 @@ namespace FullStackAPI.Controllers
                 return BadRequest();
             }
 
-            if (await TaiKhoanTonTai(taiKhoanMoi.Email))
-            {
-                return BadRequest("Tài khoản đã tồn tại !");
-            }
 
             _context.Entry(taiKhoanMoi).State = EntityState.Modified;
             try

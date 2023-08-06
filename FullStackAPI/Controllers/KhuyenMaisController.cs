@@ -46,74 +46,51 @@ namespace FullStackAPI.Controllers
             {
                 return NotFound();
             }
-
             return khuyenMai;
         }
 
         //// PUT: api/KhuyenMais/5
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutKhuyenMai(int id, KhuyenMai khuyenMai)
-        //{
-        //    if (id != khuyenMai.MaKM)
-        //    {
-        //        return BadRequest();
-        //    }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutKhuyenMai(int id, KhuyenMai khuyenMai)
+        {
+            if (id != khuyenMai.MaKM)
+            {
+                return BadRequest();
+            }
 
-        //    _context.Entry(khuyenMai).State = EntityState.Modified;
+            _context.Entry(khuyenMai).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+        // POST: api/KhuyenMais
+        [HttpPost]
+        public async Task<ActionResult<KhuyenMai>> PostKhuyenMai(KhuyenMai khuyenMai)
+        {
+            if (_context.khuyenMais == null)
+            {
+                return Problem("Entity set 'FullStackDbContext.khuyenMais'  is null.");
+            }
+            _context.khuyenMais.Add(khuyenMai);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction("GetKhuyenMai", new { id = khuyenMai.MaKM }, khuyenMai);
+        }
+        // DELETE: api/KhuyenMais/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteKhuyenMai(int id)
+        {
+            if (_context.khuyenMais == null)
+            {
+                return NotFound();
+            }
+            var khuyenMai = await _context.khuyenMais.FindAsync(id);
+            if (khuyenMai == null)
+            {
+                return NotFound();
+            }
+            _context.khuyenMais.Remove(khuyenMai);
+            await _context.SaveChangesAsync();
 
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!KhuyenMaiExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
-
-        //// POST: api/KhuyenMais
-        //[HttpPost]
-        //public async Task<ActionResult<KhuyenMai>> PostKhuyenMai(KhuyenMai khuyenMai)
-        //{
-        //  if (_context.khuyenMais == null)
-        //  {
-        //      return Problem("Entity set 'FullStackDbContext.khuyenMais'  is null.");
-        //  }
-        //    _context.khuyenMais.Add(khuyenMai);
-        //    await _context.SaveChangesAsync();
-        //    return CreatedAtAction("GetKhuyenMai", new { id = khuyenMai.MaKM }, khuyenMai);
-        //}
-        //// DELETE: api/KhuyenMais/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteKhuyenMai(int id)
-        //{
-        //    if (_context.khuyenMais == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var khuyenMai = await _context.khuyenMais.FindAsync(id);
-        //    if (khuyenMai == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    _context.khuyenMais.Remove(khuyenMai);
-        //    await _context.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
-        //private bool KhuyenMaiExists(int id)
-        //{
-        //    return (_context.khuyenMais?.Any(e => e.MaKM == id)).GetValueOrDefault();
-        //}
+            return NoContent();
+        }
     }
 }

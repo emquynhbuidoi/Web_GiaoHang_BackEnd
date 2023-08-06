@@ -5,11 +5,24 @@
 namespace FullStackAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class FullTable : Migration
+    public partial class FullTanle : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "chucVus",
+                columns: table => new
+                {
+                    MaCV = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TenCV = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_chucVus", x => x.MaCV);
+                });
+
             migrationBuilder.CreateTable(
                 name: "khos",
                 columns: table => new
@@ -48,8 +61,7 @@ namespace FullStackAPI.Migrations
                 {
                     MaPTGH = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TenPTGH = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DonGia = table.Column<float>(type: "real", nullable: false)
+                    TenPTGH = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -75,7 +87,8 @@ namespace FullStackAPI.Migrations
                 {
                     MaPTVC = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TenPTVC = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    TenPTVC = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DonGia = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -96,12 +109,19 @@ namespace FullStackAPI.Migrations
                     NgaySinh = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     HoTen = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TrangThaiTK = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TenCV = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MaCV = table.Column<int>(type: "int", nullable: false),
+                    chucVuMaCV = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_taiKhoans", x => x.MaTK);
+                    table.ForeignKey(
+                        name: "FK_taiKhoans_chucVus_chucVuMaCV",
+                        column: x => x.chucVuMaCV,
+                        principalTable: "chucVus",
+                        principalColumn: "MaCV",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -133,9 +153,8 @@ namespace FullStackAPI.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MatKhau = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MaTK = table.Column<int>(type: "int", nullable: false),
                     taiKhoanMaTK = table.Column<int>(type: "int", nullable: false),
-                    MaKho = table.Column<int>(type: "int", nullable: false),
+                    MaKho = table.Column<int>(type: "int", nullable: true),
                     khoMaKho = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -164,7 +183,7 @@ namespace FullStackAPI.Migrations
                     TenPhuongTien = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MatKhau = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MaTK = table.Column<int>(type: "int", nullable: false),
+                    SLHD = table.Column<int>(type: "int", nullable: true),
                     taiKhoanMaTK = table.Column<int>(type: "int", nullable: false),
                     MaPTVC = table.Column<int>(type: "int", nullable: false),
                     phuongThucVCMaPTVC = table.Column<int>(type: "int", nullable: false)
@@ -220,7 +239,6 @@ namespace FullStackAPI.Migrations
                     KhoangCach = table.Column<float>(type: "real", nullable: false),
                     NgayDatGiao = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NgayGiaoHang = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LaDonDatGiao = table.Column<int>(type: "int", nullable: false),
                     TenNguoiNhan = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SDTNguoiNhan = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TenNguoiGui = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -232,6 +250,8 @@ namespace FullStackAPI.Migrations
                     phuongThucTTMaPTTT = table.Column<int>(type: "int", nullable: false),
                     MaPTGH = table.Column<int>(type: "int", nullable: false),
                     phuongThucGHMaPTGH = table.Column<int>(type: "int", nullable: false),
+                    MaPTVC = table.Column<int>(type: "int", nullable: false),
+                    phuongThucVCMaPTVC = table.Column<int>(type: "int", nullable: false),
                     MaKM = table.Column<int>(type: "int", nullable: true),
                     khuyenMaiMaKM = table.Column<int>(type: "int", nullable: true),
                     MaTX = table.Column<int>(type: "int", nullable: true),
@@ -269,6 +289,12 @@ namespace FullStackAPI.Migrations
                         column: x => x.phuongThucTTMaPTTT,
                         principalTable: "phuongThucTTs",
                         principalColumn: "MaPTTT",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_donGiaos_phuongThucVCs_phuongThucVCMaPTVC",
+                        column: x => x.phuongThucVCMaPTVC,
+                        principalTable: "phuongThucVCs",
+                        principalColumn: "MaPTVC",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_donGiaos_taiXes_taiXeMaTX",
@@ -333,6 +359,11 @@ namespace FullStackAPI.Migrations
                 column: "phuongThucTTMaPTTT");
 
             migrationBuilder.CreateIndex(
+                name: "IX_donGiaos_phuongThucVCMaPTVC",
+                table: "donGiaos",
+                column: "phuongThucVCMaPTVC");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_donGiaos_taiXeMaTX",
                 table: "donGiaos",
                 column: "taiXeMaTX");
@@ -366,6 +397,11 @@ namespace FullStackAPI.Migrations
                 name: "IX_phieuXuatNhaps_khoMaKho",
                 table: "phieuXuatNhaps",
                 column: "khoMaKho");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_taiKhoans_chucVuMaCV",
+                table: "taiKhoans",
+                column: "chucVuMaCV");
 
             migrationBuilder.CreateIndex(
                 name: "IX_taiXes_phuongThucVCMaPTVC",
@@ -416,6 +452,9 @@ namespace FullStackAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "taiKhoans");
+
+            migrationBuilder.DropTable(
+                name: "chucVus");
         }
     }
 }

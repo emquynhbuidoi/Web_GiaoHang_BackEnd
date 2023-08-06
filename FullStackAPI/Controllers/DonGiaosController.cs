@@ -34,6 +34,23 @@ namespace FullStackAPI.Controllers
             return await _context.donGiaos.ToListAsync();
         }
 
+        // GET: dựa vào ID
+        [HttpGet("{id}")]
+        public async Task<ActionResult<DonGiao>> GetDonGiao(int id)
+        {
+            if (_context.donGiaos == null)
+            {
+                return NotFound();
+            }
+            var dongiao = await _context.donGiaos.FindAsync(id);
+
+            if (dongiao == null)
+            {
+                return NotFound();
+            }
+
+            return dongiao;
+        }
         // Lấy: dựa vào EMAIL
         [HttpGet("GetEmail/{email}")]
         public async Task<ActionResult<DonGiao>> GetDonGiaoFromEmail(string email)
@@ -57,22 +74,7 @@ namespace FullStackAPI.Controllers
             }
 
             _context.Entry(donGiao).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DonGiaoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
@@ -86,7 +88,7 @@ namespace FullStackAPI.Controllers
                 return Problem("Entity set 'FullStackDbContext.donGiaos'  is null.");
             }
 
-            if (donGiao.MaKH == 0 || donGiao.MaPTTT == 0 || donGiao.MaPTGH == 0)
+            if (donGiao.MaKH == 0 || donGiao.MaPTTT == 0 || donGiao.MaPTGH == 0 || donGiao.MaPTVC == 0)
             {
                 return BadRequest("Thiếu thông tin khoá ngoại");
             }
@@ -94,9 +96,10 @@ namespace FullStackAPI.Controllers
             var kh = await _context.khachHangs.FindAsync(donGiao.MaKH);
             var pttt = await _context.phuongThucTTs.FindAsync(donGiao.MaPTTT);
             var ptgh = await _context.phuongThucGHs.FindAsync(donGiao.MaPTGH);
+            var ptvc = await _context.phuongThucVCs.FindAsync(donGiao.MaPTVC);
 
 
-            if (kh == null || pttt == null || ptgh == null)
+            if (kh == null || pttt == null || ptgh == null || ptvc == null)
             {
                 return BadRequest("Không tìm thấy thông tin khoá ngoại!");
             }
@@ -104,6 +107,7 @@ namespace FullStackAPI.Controllers
             donGiao.khachHang = kh;
             donGiao.phuongThucTT = pttt;
             donGiao.phuongThucGH = ptgh;
+            donGiao.phuongThucVC = ptvc;
 
             if(donGiao.MaKM != 0)
             {
@@ -113,6 +117,11 @@ namespace FullStackAPI.Controllers
                     donGiao.khuyenMai = km;
                 }
             }
+            else
+            {
+                donGiao.khuyenMai = null;
+            }
+
             if (donGiao.MaTX != 0)
             {
                 var tx = await _context.taiXes.FindAsync(donGiao.MaTX);
@@ -120,6 +129,10 @@ namespace FullStackAPI.Controllers
                 {
                     donGiao.taiXe = tx;
                 }
+            }
+            else
+            {
+                donGiao.taiXe = null;
             }
             if (donGiao.MaKho != 0)
             {
@@ -129,6 +142,10 @@ namespace FullStackAPI.Controllers
                     donGiao.kho = kho;
                 }
             }
+            else
+            {
+                donGiao.kho = null;
+            }
 
 
             _context.donGiaos.Add(donGiao);
@@ -136,29 +153,6 @@ namespace FullStackAPI.Controllers
             return CreatedAtAction("GetDonGiao", new { id = donGiao.MaDG }, donGiao);
         }
 
-        // DELETE: api/DonGiaos/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteDonGiao(int id)
-        //{
-        //    if (_context.donGiaos == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var donGiao = await _context.donGiaos.FindAsync(id);
-        //    if (donGiao == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    _context.donGiaos.Remove(donGiao);
-        //    await _context.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
-
-        private bool DonGiaoExists(int id)
-        {
-            return (_context.donGiaos?.Any(e => e.MaDG == id)).GetValueOrDefault();
-        }
+    
     }
 }
