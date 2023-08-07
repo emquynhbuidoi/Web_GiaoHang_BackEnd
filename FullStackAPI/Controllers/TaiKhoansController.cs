@@ -25,39 +25,7 @@ namespace FullStackAPI.Controllers
         }
 
 
-        // POST: Đăng ký
-        //[Authorize]
-        [HttpPost]
-        public async Task<ActionResult<TaiKhoan>> CreateTaiKhoan(TaiKhoan taiKhoan)
-        {
-            var cv = await _context.chucVus.FindAsync(taiKhoan.chucVu.MaCV);
-            if (cv == null)
-            {
-                return BadRequest("Không tìm thấy khoá CV!");
-            }
-            taiKhoan.chucVu = cv;
-
-            if (_context.taiKhoans == null)
-            {
-                return Problem("Entity set 'FullStackDbContext.taiKhoans'  is null.");
-            }
-            var existingAccount = await _context.taiKhoans.FirstOrDefaultAsync(x => x.Email == taiKhoan.Email);
-            if (existingAccount != null)
-            {
-                return BadRequest("Tài khoản đã tồn tại !");
-            }
-
-            taiKhoan.MatKhau = PasswordHasher.HashPassword(taiKhoan.MatKhau);
-            //taiKhoan.Token = "";
-
-            _context.taiKhoans.Add(taiKhoan);
-            await _context.SaveChangesAsync();
-
-            return Ok(taiKhoan);
-        }
-
         // GET: api/TaiKhoans
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TaiKhoan>>> GettaiKhoans()
         {
